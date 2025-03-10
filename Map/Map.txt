@@ -1,0 +1,158 @@
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Maps in go lang")
+
+	//map[string]string -map[key]value
+	//create map
+	languages := make(map[string]string)
+
+	//add element
+	languages["J"] = "Java"
+	languages["JS"] = "JavaScript"
+	languages["G"] = "golang"
+
+	fmt.Println(languages)
+	fmt.Println(languages["G"])
+
+	delete(languages, "G")
+	fmt.Println(languages)
+
+	//iterate on map
+	for key, val := range languages {
+		fmt.Printf("for key %v, value is %v \n", key, val)
+	}
+}
+
+53. What's a Map
+
+Map
+----
+it is a combination of key value pair
+
+Map<--->Hash<--->Object<--->Dict
+Go     Ruby      JavaScript  python
+they all are similar which contain key value pair
+
+
+Map key and value are statically type that mean they mean have the same type
+
+                              MAP
+                        Key        Value
+         All Keys       Key        Value      All value will be same type(datatype)
+         the same       Key        Value
+         type          
+
+suppose if key is type string so all key will be string type
+if val is type int so all value will be int type
+
+
+syntax
+------
+map[key type]value type{
+    key : value,
+    key : value,
+    .....soon
+}
+
+1 way to delare map
+----------------------
+package main
+
+import "fmt"
+
+func main() {
+	//declaring map
+	//1 way to declare map
+	colors := map[string]string{
+		"red":   "#ff0000",
+		"green": "#00ff00",
+		"blue":  "#0000ff",
+	}
+	fmt.Println(colors)//map[blue:#0000ff green:#00ff00 red:#ff0000]
+}
+
+
+
+2 way to delare map
+----------------------
+package main
+
+import "fmt"
+
+func main() {
+	//declaring map
+	//1 way to declare map
+	var colors map[string]string
+    fmt.Println(colors) //if we don't intialize a value to map then it consider as default value "" 
+    empty because we uses string
+
+
+   //3 way declaring map
+    colors := make(map[string]string) //amke is a built in method used to create map
+	//to intialize the value
+	colors["red"] = "#ff0000"
+	colors["green"] = "#00ff00"
+	colors["blue"] = "#0000ff"
+
+	fmt.Println(colors)
+
+	//delete map
+	delete(colors, "red")
+	fmt.Println(colors)
+}
+
+
+
+55. Iterating Over Maps
+
+func printMap(c map[string]string){
+    for color,hex:=range c{
+        fmt.Println(color,hex)
+    }
+}
+
+c->argument name
+ map[string]string->type of the map
+ color-->represent  key for this step through the loop
+ hex-->represent val for this step through the loop 
+
+
+
+56. Differences Between Maps and Structs
+--------------------------------------
+map and struct both are goloang datastructure
+
+in map we are not copying the map we copt the Reference of map
+in struct we are copying the struct 
+
+Map                                                                   Structs
+1.All key and value must be same type                             Values can be of different type
+2.Reference type                                                      Value type
+3.Key are indexed in map we can iterate over them                   key doesn;t support indexing
+4.Use map  to represent collection of              
+related properties .
+used for very closely related value
+for eg
+"red":   "#ff0000",
+"green": "#00ff00"
+"blue":  "#0000ff",
+it has mapping red color has some 
+properties/value
+
+
+Difference Between struct and map in Go
+Feature	Struct 🏗	Map 🗺️
+Definition	A collection of named fields with fixed types.	A dynamic collection of key-value pairs.
+Usage	Used when you need a well-defined data structure with specific fields.	Used for key-value lookups where keys are dynamic.
+Performance	Faster than maps for accessing fields (direct memory access).	Slower than structs (hash-based lookup).
+Memory Usage	Uses less memory because fields are statically allocated.	Uses more memory due to internal hashing.
+Keys	Not required (fields are accessed directly).	Requires keys to access values.
+Modification	Can be modified directly.	Can add/remove keys dynamically.
+Iteration	Can’t iterate directly, but fields can be accessed.	Can iterate using for range.
+Zero Value	Zero value exists for all fields.	A missing key returns the zero value of the type.
+
+
+🚀 Structs are better for fixed data structures, while maps are great for flexible lookups.

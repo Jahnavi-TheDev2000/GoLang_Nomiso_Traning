@@ -1,0 +1,542 @@
+41 Struct 
+------
+->Data structure Collection of properties that are related together
+
+                      card
+                  "Ace of Spades"
+                   what is suit?
+                   what is value?
+
+Card Struct field              Card Struct 
+suit <string>                 suit  --->"Spades"
+value <string>                value --->"Ace"
+
+
+
+42. Defining Structs
+--------------------
+
+Example
+--------
+
+Tell go what fields the person struct has                        create a new value of type person
+Person struct                                                  
+___________________                                                  _______________________
+firstName <string>|                                                  |firstName -->"Alex"   | 
+lastName <string> |                                                  | lastName-->"Anderson"|
+__________________|                                                  |______________________|
+
+custom type datatype-struct
+
+Defining
+--------
+type person struct{
+    firstName string                                                  
+    lastName string
+}
+
+43. Declaring Structs
+----------------------
+func main() {
+	//declaring
+	//1 way
+	jahnavi := person{firstName: "Jahnavi", lastName: "Soni"}
+	fmt.Println(jahnavi) //{Jahnavi Soni}
+	//2 way
+	shubham := person{"Shubham", "soni"}
+	fmt.Println(shubham) //{Shubham soni}
+    //3 way
+
+}
+
+
+if you don;t define any value in struct to the variable go assign a default value
+Type              Zero Values
+string            ""
+int               0
+float64           0
+bool             false
+
+
+44. Updating Struct Values
+--------------------------
+//defining
+type person struct {
+	firstName string
+	lastName  string
+}
+
+/*
+func main() {
+	//declaring
+	//1 way
+
+		jahnavi := person{firstName: "Jahnavi", lastName: "Soni"}
+		fmt.Println(jahnavi) //{Jahnavi Soni}
+		//2 way
+		shubham := person{"Shubham", "soni"}
+		fmt.Println(shubham) //{Shubham soni}
+
+
+	var jaya person
+	//jaya is vairable name
+	//person is struct type (custom datatype)
+	fmt.Println(jaya) //{ } returned empty string
+
+	fmt.Printf("%+v", jaya) //string format
+
+	//update struct value
+	jaya.firstName = "Shubham"
+	jaya.lastName = "Soni"
+
+	fmt.Println(jaya)
+}
+*/
+
+
+
+45. Embedding Structs
+------------------------
+its a kind of has a relationship
+type person                                       type contactInfo
+firstName -->string                               email string
+lastName  -->string                               zipCode  int
+contact  -->contactInfo
+
+
+what is "%+v"?
+In Go, the %+v format verb in fmt.Printf is used to print struct values with field names included.
+
+Difference Between %v and %+v
+Format Verb  	Description
+%v	            Prints struct values without field names.
+%+v	            Prints struct values with field names.
+
+When to Use %+v?
+Debugging: Helps in printing struct values with field names.
+Logging: Makes logs more readable.
+Struct Inspection: Useful when working with complex data structures.
+
+
+package main
+
+import "fmt"
+
+//defining
+
+type contactInfo struct {
+	email   string
+	zipCode int
+}
+type person struct {
+	firstName string
+	lastName  string
+	//1 way
+	//contact   contactInfo //Embedding Structs  in another struct
+	//2 way
+	//we don't have to specify a contact field in contactInfo directly use it
+	contactInfo
+}
+
+func main() {
+	info := person{
+		firstName: "Jahnavi",
+		lastName:  "Soni",
+		// contact: contactInfo{
+		// 	email:   "jahnavi.soni2k@gmail.com",
+		// 	zipCode: 455872,
+		// },
+		contactInfo: contactInfo{
+			email:   "jahnavi.soni2k@gmail.com",
+			zipCode: 455872,
+		},
+	}
+	fmt.Printf("%+v", info) //print value with its field name
+}
+
+
+46. Structs with Receiver Functions
+------------------------------------
+//reciever function in struct
+func (p person) print() {
+	fmt.Printf("%+v", p) //print value with its field name
+	fmt.Println()
+
+}
+
+
+
+47. Pass By Value
+------------------
+
+lets talk about when we create a "struct" what will happen in the memory
+
+  jim:=person{}//struct of person
+
+local machine   
+   RAM
+Address    value
+0000       
+0001     person{firstName: "jim"...} <----------jim
+0002
+0003
+....soon
+
+
+jim.updateName("jimmy")      func (p person) updateName(){}
+
+function is a pass by value it means it copy that data it does pass original address
+  RAM
+Address    value
+0000       
+0001     person{firstName: "jim"...} <----------jim
+0002
+0003     person{firstName: "jim"...} <--------- p
+
+for jim and p address are different
+so when we update the value of jim to jimmmy it is updating the copy value of (p person) its not updating the value of original person jim
+
+
+✅pass by value in Go
+---------------------
+by default Go is a pass by value language
+In Go, pass by value means that when a function is called, a copy of the actual argument is passed to the function. This means:
+
+->Any changes made inside the function do not affect the original variable.
+->The function operates on a separate copy of the data.
+
+jim:=person{firstName: "Jahnavi"}
+jim.updateName("Jaya")
+func (p person) updateName(newFirstName string) {
+	p.firstName = newFirstName
+}
+
+when we call the function then a copy of actual argument is passed to a function
+
+
+func(p person)---> person{firstName: "Jahnavi"} //passing copy of actual argument is passed to a function
+when we changejim.updateName("Jaya") then copy is changing not original variable value
+
+
+  RAM
+Address    value
+0000       
+0001     person{firstName: "jim"...} <----------jim
+0002
+0003     person{firstName: "jimmy"...} <--------- p
+
+
+
+
+Let's see how pass by value works with primitive types and structs.
+--------------------------------------------------------------------
+✅ Example with an Integer (Primitive Type)
+package main
+
+import "fmt"
+
+// Function that attempts to modify an integer
+func modifyValue(x int) {
+	x = 20 // This change won't affect the original variable
+	fmt.Println("Inside modifyValue:", x)
+}
+
+func main() {
+	num := 10
+	fmt.Println("Before function call:", num)
+
+	modifyValue(num) // Passing by value (copy of num)
+
+	fmt.Println("After function call:", num) // Original value remains unchanged
+}
+
+Before function call: 10
+Inside modifyValue: 20
+After function call: 10
+
+
+✅ Example with Structs
+Even when passing a struct, Go still passes by value (creates a copy).
+package main
+
+import "fmt"
+
+type Person struct {
+	Name string
+	Age  int
+}
+
+// Function that tries to modify the struct
+func modifyPerson(p Person) {
+	p.Name = "Shubham"
+	p.Age = 30
+	fmt.Println("Inside modifyPerson:", p)
+}
+
+func main() {
+	person := Person{Name: "Jahnavi", Age: 25}
+	fmt.Println("Before function call:", person)
+
+	modifyPerson(person) // Passing struct by value (copy)
+
+	fmt.Println("After function call:", person) // Original struct remains unchanged
+}
+
+When to Use Pass by Value?
+✅ When you want to ensure that the original variable is not modified.
+✅ When dealing with small data types (integers, floats, booleans, small structs).
+✅ When working with immutable data (values that shouldn't change).
+
+pass by reference
+==================
+it shares the original copy 
+we can achieve this by using pointers
+To allow a function to modify the original value, pass a pointer instead of a copy.
+
+
+
+48. Structs with Pointers
+
+
+
+package main
+
+import "fmt"
+
+//defining
+
+type contactInfo struct {
+	email   string
+	zipCode int
+}
+type person struct {
+	firstName string
+	lastName  string
+	//1 way
+	//contact   contactInfo //Embedding Structs  in another struct
+	//2 way
+	//we don't have to specify a contact field in contactInfo directly use it
+	contactInfo
+}
+//reciever function in struct
+func (p person) print() {
+	fmt.Printf("%+v", p) //print value with its field name
+	fmt.Println()
+
+}
+
+func main() {
+	jim := person{
+		firstName: "Jahnavi",
+		lastName:  "Soni",
+		contactInfo: contactInfo{
+			email:   "jahnavi.soni2k@gmail.com",
+			zipCode: 455872,
+		},
+	}
+
+	jimPointer := &jim //&jim  &-->address of is used to copy the original address of vaiable(pass by reference)
+	jimPointer.updateName("jimmy")
+	jim.print()
+	jimPointer.print()
+
+}
+
+//pass by reference using pointers
+func (pointerToPerson *person) updateName(newFirstName string) {
+	(*pointerToPerson).firstName = newFirstName //this will reflect the changes in orginal variable
+}
+
+49. Pointer Operations
+
+✅ (&variable) ->give me the memory address of the value this variable is pointing at
+jimPointer := &jim
+
+    
+ jimPointer has access of             RAM
+ the actualaddress of jim          Address    value
+  not actual value                 0000       
+ jimPointer------------------>     0001     person{firstName: "jim"...} <----------jim
+                                   0002
+                                   0003
+
+
+(*pointerToPerson).firstName = newFirstName //this will reflect the changes in orginal variable
+
+(*pointerToPerson)->give me the actual value access  person{firstName: "jim"...}
+person{firstName: "jim"...}----->change it to  person{firstName: "jimmy"...}
+
+✅ (*pointer)----->give me the value this memory address is pointing at
+________________________________________________________________________________________________________________
+func (pointerToPerson *person) updateName(newFirstName string) {
+	(*pointerToPerson).firstName = newFirstName //this will reflect the changes in orginal variable
+}
+
+*person--->it is a type which is specifying that we are working with pointers to a person
+(*pointerToPerson)--> this is an operator -it means we wanna manipulate the value the pointer is referencing .
+
+
+
+ 0001     person{firstName:"jim"...}
+  |                  |
+  |                  |
+address             value
+
+
+turn-->ADDRESS--into---VALUE---with---->*address
+turn-->VALUE--into---ADDRESS---with---->&value
+
+Example
+-------
+jim := person{
+		firstName: "Jahnavi",
+		lastName:  "Soni",
+		contactInfo: contactInfo{
+			email:   "jahnavi.soni2k@gmail.com",
+			zipCode: 455872,
+		},
+	}
+1.
+jim is value turn it into address
+jimPointer:=&jim
+jimPointer has the actual address of jim
+
+2.
+func (pointerToPerson *person) updateName(newFirstName string) {
+}
+jimPointer.updateName()
+
+jimPointer address is pass by reference to  pointerToPerson *person
+
+3.
+
+turn-->ADDRESS--into---VALUE---with---->*address
+pointerToPerson--->into-->*---->with--->(*pointerToPerson)
+(*pointerToPerson).firstName = newFirstName
+
+
+50. Pointer Shortcut
+--------------------
+
+// jimPointer := &jim //&jim  &-->address of is used to copy the original address of vaiable(pass by reference)
+// jimPointer.updateName("jimmy")
+      |
+      |
+    type of *person
+    or pointer to a person
+
+
+jim.updateName("Jahnavi") //go will automatically give the actual address to that pointer
+    |
+    |
+type of person
+this program uses a Shortcut,where go will automatically assume that even though jim.updateName("Jahnavi") is using
+a value type we probably meant to pass in a pointer to the person struct
+
+func (pointerToPerson *person) updateName(newFirstName string) {
+                         |
+}                        |
+                type of *person
+               or pointer to a person
+ 
+
+51. Gotchas With Pointers
+======================= 
+"Gotchas" (Common Mistakes or Traps in Go)
+"Gotchas" is a slang term for tricky pitfalls, unexpected behaviors, 
+or mistakes that developers often encounter in a programming language like Go.
+
+
+
+
+
+primitive type and struct type ->pass by value  
+Whenever you pass an integer, float, string, or struct into a function, what does Go do with that argument?
+->it create  a copy  of each argument and these copies are used inside the function
+
+________________________________________________________________________________________________________________
+✅In struct everything is pass by value
+✅ taking about slice (array)
+
+
+52. Reference vs Value Types
+
+slice is reference type
+
+func main() {
+	mySlice := []string{"hey", "there", "How", "Are", "you"}
+	modifySlice(mySlice)
+	fmt.Println(mySlice) 
+}
+func modifySlice(s []string) {
+	s[0] = "bye"
+}
+
+[bye there How Are you]
+when we use slice it is a reference type 
+when we pass slice in a function it is passing the same address that why when we change something in function that reflect to orginal data
+
+
+✅ IN GO WE HAVE TWO DATASTRUCTURE
+Array                         Slice
+->Primitive Data            ->can grow and shrink.
+structure.                  ->used 99% of time for list of elements
+->can't be resizeable
+->Rarely used directly
+
+✅ slice internally used array to store the element
+
+when we create slice
+mySlice := []string{"hey", "there", "How", "Are", "you"}
+
+
+structure of slice
+slice has three things                     Array
+ptr to head   -------------------------                        
+capacity(intial)                       |  pointer points to head 
+length                              {"hey", "there", "How", "Are", "you"}
+                                       |
+                                     head
+
+
+        memory
+          RAM
+Address            value
+001
+002            |len|capacity|ptr to head|  ------------|          <-------------mySlice
+0001          {"hey", "there", "How", "Are", "you"}<---|
+0002          
+08762
+
+
+modifySlice(mySlice)  -0001    
+func modifySlice(s []string) {0001    
+	s[0] = "bye"          
+}
+
+slice data structure copy even though they share the same array
+slice is a reference type because it points to another DATASTRUCTURE (Array)in go
+        memory
+          RAM
+Address            value
+001
+002            |len|capacity|ptr to head|  ------------|          <-------------mySlice
+0001          {"hey", "there", "How", "Are", "you"}<---|
+0002          |len|capacity|ptr to head|  -------------|           <-----------s
+08762
+
+so here a slice is create in new location but both slice are using same array 
+✅When we create a slice, Go will automatically create which two data structures?
+->An Array and structure  that records the len of slice,capacity of slice and a reference to the underlying array
+________________________________________________________________________________________________________________
+
+                        Value type                 Reference Type
+                        int                        slices 
+                        float                      maps
+use pointers to         string                     channels     <---------------don't worry about pointers with these 
+change these thing in   bool                       pointers
+function                struct                     functions
+
+passing these on function
+Value type means it share the copy of variable if we change any thing in copy it will not reflect to original variable
+Reference Type it share the orginal address if we change anything to that variable that will also reflect in orginal

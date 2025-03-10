@@ -1,0 +1,449 @@
+To run go program write in command
+---------------------------------
+go run main.go
+
+GO CLI
+-------
+ 🚀 go run->it compiles and executes one or two files
+ 🚀 go build->it just compiles the code not executes it.
+eg-
+PS C:\GOLang> go build main.go 
+it just compiled 
+
+PS C:\GOLang> ls
+    Directory: C:\GOLang
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        05-03-2025     20:54        2302976 main.exe
+-a----        05-03-2025     20:04             79 main.go
+
+main.exe ->it is a compiled file
+after this to execute main.exe file we need to write a command (.\main.exe)
+
+🚀go fmt->formats all the code in each file in the current directory
+go fmt is a tool that automatically formats Go code according to standard Go style conventions.
+#run this command on terminal
+----------------------------
+go fmt main.go
+
+other commands
+---------------
+go test
+go install
+go get
+
+
+____________________________________________________
+code
+-----
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Hello World")
+}
+
+lets talk about package 
+(package main)
+
+package
+--------
+Package is similar to project or workspace
+package is a collection of common source 
+
+in go lang we have two types of package
+1.Executable 
+------------
+->It Generates a file that we can run
+->whenever we write this command
+go build main.go
+->it generate a executable file
+->main.exe it is a executable type package 
+->executable type package it generate a file that file we can run like main.exe
+main.exe so to run this executable file we use a command which is .\main.exe
+----------------------
+Package
+  |
+go build
+   |
+main.exe (if we run this file ),the file function named 'main' would be automatically ran.
+
+---------------------------
+"main" word -> it is used to create executable package main
+package main
+import "fmt"
+func main() {
+	fmt.Println("Hello World")
+}
+PS C:\GOLang> go run main.go
+Hello World
+
+-------------
+instead of main if we write something else
+package hello
+import "fmt"
+func main() {
+	fmt.Println("Hello World")
+}
+so it will not run
+PS C:\GOLang> go run main.go
+package command-line-arguments is not a main package 
+-----------------------------------
+Why does package main matter?
+In Go, the package main is special because it is used to create an executable program. It tells the Go compiler that this package should produce a binary that can be run.
+
+If you rename the package to something else (e.g., package hello), the program will not run as an executable because it is no longer recognized as an entry point for execution.
+
+Executable package
+-------------------
+package main(main is special)
+->Defines a package that can be compiled and then "executed" MUST HAVE A func called 'main'
+
+
+Reusable package
+----------------
+eg-package calculator
+package upload
+->both package Defines a package that can be used as a dependency (helper code)
+
+
+_______________________________________________________________________________________________________
+by visiting golang.org/pkg -> we can get more packages
+now let talk about import statement 
+--------------------------------------
+it is add go programming language by default
+import "fmt"
+fmt package can have all the standard library like to print the output in terminal
+
+main package don't have the access of fmt code/function so we need to import that in main package
+built in package
+----------------
+math
+fmt 
+encoding
+debug
+io
+
+
+                              main(main package have the access of all these package)
+							 
+						fmt            calculator       uploader
+					standard lib       Resuable Package Resuable Package
+					executable package
+
+_______________________________________________________________________________________________________
+
+func main(){
+}
+
+"func" keyword it tells "go" that we are about to declare a function
+main() sets the name of the function
+()->lists of agruments to pass the function
+{}-> function body calling the function runs this code
+
+_______________________________________________________________________________________________________
+how is the main.go file organized?
+----------------------------------
+1.package main ->package declaration
+2.list out all the other packages we might need to import into this file we can import packages
+3.func main() {
+	fmt.Println("Hello World")
+} we declare functions ,tell go to do things
+
+
+In Go, the main package is special because it is used to create executable programs. It must contain a main() function, which serves as the entry point for execution.
+--------------------------------
+
+why do we use import statements?
+-------------------------------
+to give our package access to code written in another package
+
+
+
+_______________________________________________________________________________________________________
+go lang is a statically typed language means we need to define datatype of variable while declaring it.
+variable
+---------
+1 way
+-----
+var card string ="Ace of spades"
+
+var->we are about to create a new variable 
+card->the name of the variable will be card
+string ->only a string will ever be assigned  to this variable 
+"Ace of spades"->assigning the value to this variable
+
+2 way
+-----
+:= is used to assign new variable
+card:="Ace of spades"
+
+when we use ":" when we intialize very first time a variable the we have to use it
+after that if u reinitialize the value 
+you can directly use like this
+card="five of diamonds"
+
+instead of this if i do this then we will get compiler error that this is not new variable
+card:="five of diamonds"
+
+
+_______________________________________________________________________________________________________
+
+func newCard() string{
+}
+newCard() it define a function called 'newCard'
+string-when executed this function will return a value of type 'string'.
+
+
+_______________________________________________________________________________________________________
+go has two basic data structure for handling list of element
+Array
+-----
+Array
+->fixed length list of things
+Slice
+->An array that can grow or shrink(kind of arraylist)
+->In Slice every element in a slice must be of same type
+
+
+//create a slice
+cards := []string{"Ace of Diamonds", newCard()}
+fmt.Println(cards)
+//add the element in array at the end
+cards = append(cards, "Six of spades")
+
+//itertate on slice
+for index, card := range cards {
+		fmt.Println(index, card)
+}
+
+->"range" is a keyword that we use whenever we want to iterate
+over every single records/element inside of a slice
+->"index" of the element in the array
+->"card" Current card we are iterating over
+->fmt.Println(index, card)- run this once for each card in the slice
+
+
+go is not object oriented programming language so there is no idea of classes inside of Go.
+
+_______________________________________________________________________________________________________
+
+Approch of Cards project
+-------------------------
+OO Aproach ->Object oriented approach
+                                         Deck Instance
+										 cards(String) which may be a list of array
+Deck class  ------------------------    
+                                       print()  shuffle()
+									    
+									   saveToFile()
+
+Base Go type
+------------
+
+string ,integer,float,arrat ,map
+          |
+		  |
+		  |  we want to "extend" a base type and add some extra functionality to it.
+		  |
+		  |
+		  |
+type deck[] string  (tell GO we want to create an array of strings and add bunch of functions sprecifically made to work with it)
+        |
+		|
+		|
+Functions with deck as a 'receiver' ->A function with a receiver is like a'method' 
+A function that belongs to an 'instance'
+
+
+_______________________________________________________________________________________________________
+       Cards folder
+
+main.go            deck.go                deck_test.go
+code to create     code that describes    code to automatically test the deck
+and manipulate     what  a deck is 
+a deck              and how it works
+
+--------------------------------
+package main
+
+import "fmt"
+
+func main() {
+	//calling normal function here
+	// card := newCard()
+	// fmt.Println(card)
+
+	//create a slice
+	cards := []string{"Ace of Diamonds", newCard()}
+	fmt.Println(cards)
+
+	//add the element in array at the end
+	cards = append(cards, "Six of spades")
+
+	//itertate on slice
+	for index, card := range cards {
+		fmt.Println(index, card)
+	}
+	
+	
+
+}
+
+func newCard() string {
+	return "five diamond cards"
+}
+-----------------------------------
+
+
+In Go, the statement:
+---------------------
+type deck []string
+defines a new type named deck, which is a slice of strings ([]string).
+
+Breakdown:
+type deck []string
+type deck: Creates a new type named deck.
+[]string: Specifies that deck is a slice of strings.
+This means that deck is now an alias for []string, allowing you to define and work with card decks (or any collection of strings) in a more meaningful way.
+
+---------------------------------------------------
+//reciever function
+func(d deck) print(){}
+Any variable of type "deck" now gets access to the "print" method
+
+//Custom method
+//reciever function
+func(d deck) print(){
+	for i,card:=range d{
+		fmt.Println(i,card)
+	}
+}
+
+(d deck) 
+d->The Actual copt of the deck we are working with is available in the function as a variable called 'd'
+deck->Every variable of type deck can call this function on itself
+d is a reference/instance of deck
+
+by convention we always give the name of 1 or 2 letter to the reference
+
+
+-------------------------------
+
+func (this laptopSize) getSizeOfLaptop() laptopSize {
+    return this
+}
+Receiver (this laptopSize): This defines getSizeOfLaptop() as a method on the laptopSize type.
+Method Name: getSizeOfLaptop()
+Return Type: It returns laptopSize.
+Function Body: It simply returns this, which is the value of laptopSize itself.
+
+------------------------
+//this won't be able to access because a is not the deck type 
+// a:=[]int{1,2,3}
+// a.print()
+------------------------
+
+
+package main
+
+func main() {
+
+	//cards is a deck type - deck type is similar to slice of string type
+	//so cards variable is able to access print method
+	cards := deck{"Ace of Diamonds", newCard()}
+	cards.print()
+
+	//this won't be able to access because a is not the deck type 
+	// a:=[]int{1,2,3}
+	// a.print()
+
+}
+
+//create and return a list of playing cards essentially an array of strings
+func newCard() string {
+	return "five diamond cards"
+}
+
+_______________________________________________________________________________________________________
+Slices Range syntax
+
+Slices are zero indexed based
+// Slices
+func main() {
+	fruits := []string{"apple", "banana", "orange", "grapes"}
+
+	// syntax-fruits[startIndexIncluding:upToNotIncluding]
+	fmt.Println(fruits[0:2])
+	fmt.Println(fruits[:2])
+	fmt.Println(fruits[2:])
+
+}
+o/p
+---
+[apple banana]
+[apple banana]
+[orange grapes]
+
+
+_______________________________________________________________________________________________________
+
+Multiple Return Values
+---------------------
+go has support that we can return multiple value in function
+func deal(d deck, handSize int) (deck, deck) {
+	return d[:handSize], d[handSize:]
+}
+
+and to access that we can define two variables
+hand,remainingDeck: =deal(cards,5);
+
+hand,remainingDeck=<deck><deck>
+-----------------------------------
+example of multiple return value
+func getBookInfo() (string, int) {
+    return "War and Peace", 1000
+}
+ 
+title, pages := getBookInfo()
+
+---------------------------------
+
+package main
+ 
+import "fmt"
+ 
+func main() {
+   c := color("Red")
+ 
+   fmt.Println(c.describe("is an awesome color"))
+}
+ 
+type color string
+ 
+func (c color) describe(description string) (string) {
+   return string(c) + " " + description
+}
+
+_______________________________________________________________________________________________________
+File handling
+-------------
+24. Byte Slices
+1.saveToFile functionality
+SAVE A LIST OF CARD TO A FILE  ON THE LOCAL MACHINE
+
+saveToFile will save deck of card in local machine
+
+2.newDeckFromFile
+load a list of cards from local machine
+
+saving something to hard drive our current operating system
+
+io
+ioutil package used to implement some file handling concept
+
+
+
+medium.com
+baeldung

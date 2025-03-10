@@ -1,0 +1,348 @@
+WriteFile() function
+------------------
+it is used to write data to a new file or existing file 
+
+File Handling in Go
+-------------------
+Go provides the os and io/ioutil packages for working with files. You can create, read, write, append, and delete files.
+
+1. Creating and Writing to a File
+You can use os.Create() to create a file and os.WriteString() to write to it.
+
+os.Create("filename") → Creates a new file (or overwrites if it already exists).
+file.WriteString("text") → Writes text to the file.
+
+___________________________________________________________________________________________________________________________________
+What is defer in Go?
+In Go, defer is a keyword used to delay the execution of a function until the surrounding function returns.
+
+Simple Meaning:
+🔹 defer ensures that a function runs at the end (just before the function exits).
+🔹 It is commonly used to close resources like files, databases, or network connections.
+
+example
+-------
+package main
+
+import "fmt"
+
+// defer
+func main() {
+	fmt.Println("start")
+	defer fmt.Println("middle") //this function will execute at last
+	fmt.Println("end")
+}
+
+fmt.Println("Middle") is deferred, so it executes at the end (just before the function exits).
+
+📌 Why use defer here?
+It ensures file.Close() always runs, even if the function exits/terminate early due to an error.
+
+📌Multiple defer Statements (LIFO Order)
+package main
+
+import "fmt"
+
+func main() {
+    defer fmt.Println("First")
+    defer fmt.Println("Second")
+    defer fmt.Println("Third")
+    fmt.Println("hello")
+
+}
+
+output
+-----
+hello
+Third
+Second
+First
+
+
+=>defer statements execute in Last In, First Out (LIFO) order.
+=>The last defer statement runs first, and the first defer runs last.
+
+✅ Executes in LIFO order when multiple defer statements exist.
+
+example
+------
+package main
+
+import "fmt"
+
+// defer
+func main() {
+	fmt.Println("start")
+	defer fmt.Println("middle") //this function will execute at last
+	fmt.Println("end")
+	myDefer()
+}
+
+//let predicate output
+func myDefer() {
+	for i := 0; i < 5; i++ {
+		defer fmt.Println(i)//Execute in LIFO order
+	}
+}
+
+
+// waiting- middle  0  1 2 3 4
+//execute -start  end  4 3 2 1 0 middle
+
+
+
+___________________________________________________________________________________________________________________________________
+
+
+What is make in Go?
+In Go, make is a built-in function used to create slices, maps, and channels with allocated memory.
+
+📌 Why use make?
+It allocates memory and initializes these data structures.
+Used when you need a dynamic size (for slices) or a predefined capacity (for maps and channels).
+Unlike new, which only allocates memory, make also initializes the data structure.
+
+Maps
+-------
+key value pair datastructure
+
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Maps in go lang")
+
+	//map[string]string -map[key]value
+	//create map
+	languages := make(map[string]string)
+
+	//add element
+	languages["J"] = "Java"
+	languages["JS"] = "JavaScript"
+	languages["G"] = "golang"
+
+	fmt.Println(languages)
+	fmt.Println(languages["G"])
+
+	delete(languages, "G")
+	fmt.Println(languages)
+
+	//iterate on map
+	for key, val := range languages {
+		fmt.Printf("for key %v, value is %v \n", key, val)
+	}
+}
+
+Structs
+------
+it is a alternative version of class because in go lang we don't have classes
+In go lang there is not concept of inheritance in golang ,no super,no parent
+
+What is struct in Go?
+In Go, a struct is a composite data type that groups together variables under a single name.
+These variables, called fields, can be of different types.
+Structs allow you to create complex data types that can model real-world entities.
+
+Why Define Variables with a Capital First Letter?
+--------------------------------------------------
+In Go, the first letter of a variable, function, or struct field determines its visibility (exportability):
+
+Capitalized Names → Exported (Public)
+-------------------------------------
+If a struct field or function starts with an uppercase letter, it is exported and accessible from other packages.
+
+type Person struct {
+    Name string // Exported (public)
+    Age  int    // Exported (public)
+}
+
+Lowercase Names → Unexported (Private)
+--------------------------------------
+If a struct field or function starts with a lowercase letter, it is not exported and accessible only within the same package.
+
+type Person struct {
+    name string // Unexported (private)
+    age  int    // Unexported (private)
+}
+
+📌Use struct in Go to create custom data types with multiple fields.
+Capitalized variables, functions, and struct fields are exported (public).
+Lowercase variables, functions, and struct fields are unexported (private).
+___________________________________________________________________________________________________________________________________
+Pointers(deep copy)
+---------
+🚀A pointer in Go is a variable that stores the memory address of another variable
+🚀Instead of holding a value directly, a pointer holds the reference to a value
+🚀Pointers are useful when you need to modify a variable inside a function or avoid copying large data structures.
+
+✅pointer store the actual address of another variable
+
+1. Declaring a Pointer
+A pointer is declared using the * (asterisk) symbol.
+var ptr *int  // Declaring an integer pointer
+
+2. Assigning and Accessing a Pointer
+The & (address-of) operator is used to get the memory address of a variable.
+The * (dereference) operator is used to get the value stored at a pointer address.
+
+EXAMPLE
+-------
+package main
+
+import "fmt"
+
+func main() {
+	myNumber := 23
+
+	 //create a pointer
+	 var ptr *int
+	 ptr=&myNumber  //& to get the memory address of a variable.
+
+	 fmt.Println("value of actual pointer is:",ptr)// 0xc00000a0e8 address of ptr
+	 fmt.Println("value of actual pointer is:",*ptr)// 23 actual value
+}
+
+
+Modifying a Variable via a Pointer
+----------------------------------
+When you pass a variable by reference using a pointer, changes reflect in the original variable.
+
+package main
+
+import "fmt"
+
+// When you pass a variable by reference using a pointer, changes reflect in the original variable
+
+func modifyVarUsePointer() {
+	x := 10
+	fmt.Println("before modification", x)
+	modifyValue(&x, 20)
+	fmt.Println("After modification", x)
+
+}
+
+func modifyValue(ptr *int, changeVal int) {
+	*ptr = changeVal
+}
+
+
+
+Nil Pointers
+------------
+A pointer that does not point to anything is called a nil pointer. It has a zero value of nil.
+var ptr *int
+fmt.Println(ptr)  // Output: <nil>
+
+___________________________________________________________________________________________________________________________________
+
+byte slices
+
+"Hey Slice"
+[all character ascii will be store here] in byte slice(array)
+
+func WriteFile(filename string,data[] byte,perm os.FileMode) error
+
+
+type conversion in go
+---------------------
+type conversion is a process where it take one type to another type
+
+
+[]string{"hello world"} string of slice  convert to byte of slice
+[]byte("Hello world")
+
+[]byte ->type we want
+("hello world)->value we have to convert
+
+
+✅in project card we have slice of deck and we wanna convert it into byte of slice
+-------------------------------------------------------------------------------
+deck->[] string->string->[]byte
+
+deck->[] string->string
+string->[]byte
+
+greeting := "hey there!"
+fmt.Println([]byte(greeting))//[104 101 121 32 116 104 101 114 101 33]slice of byte
+
+✅ 26.joining a slice of string
+--------------------------------
+return strings.Join([]string(d),",") 
+return type of Join method is string
+
+
+27. Saving Data to the Hard Drive
+---------------------------------
+func WriteFile(filename string,data[] byte,perm os.FileMode) error
+
+The function signature you provided is similar to the WriteFile function in the os package in Go:
+
+this function is present in os package
+func WriteFile(filename string, data []byte, perm os.FileMode) error
+
+Explanation of Each Parameter
+Parameter	Type	Description
+filename	string	The name (and optionally, the path) of the file where data will be written.
+data	   []byte	The content that will be written to the file, represented as a byte slice.
+perm	os.FileMode	The file permission mode (e.g., read/write permissions).
+Return Type	error	Returns nil if successful, otherwise returns an error.
+
+perm os.FileMode ->
+
+Understanding File Permissions (os.FileMode)
+0644 → Owner can read/write, others can only read.
+0666 → Everyone can read and write.
+0755 → Owner can read/write/execute, others can only read/execute.
+
+
+
+28. Reading From the Hard Drive
+--------------------------------
+
+os.ReadFile(filename string)([]byte,error)
+
+error->if something went wrong during the read file the error will have something error 
+if everything will goes correct so error will have "nil" value (nil no value )
+
+Exit(code int)
+-------------
+Exit causes the current program	 to exit with the given code
+convertionally code zero indicates success,non -zero indicate the program terminates immediately
+and it is present in os package
+
+
+
+29. Error Handling
+--------------------
+
+now  we have to again convert
+//byteslice->string->[]string ->deck
+by using spilt method we can spilt a string based on separators
+
+funct Spilt(s,separators string) [] string
+this funtion return list of string
+
+
+30. Shuffling a Deck
+---------------------------
+to generate random number
+we have a func 
+func Intn(n int ) int
+->Intn returns ,as an int ,a non-negative pseudo-random number in[0 n)
+->from the default source ,it panics if n<=0
+
+31. Random Number Generation
+------------------------------
+what is seed
+In short, seed refers to an initial value used to start a random number generator (RNG).
+
+Why Use a Seed?
+Ensures that random numbers are not truly random but reproducible.
+If you use the same seed, you get the same sequence of random numbers.
+Different seeds produce different sequences.
+
+
+
+look for strings package you will get many manipualtion function for string
+

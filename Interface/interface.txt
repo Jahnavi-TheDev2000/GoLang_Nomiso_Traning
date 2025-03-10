@@ -1,0 +1,18 @@
+
+project 
+-------
+
+
+what problem we face without interface
+
+type englishBot struct                                           type spanishBot struct
+                                    probably have diff logic
+func(englishBot) getGreeting()string{    ---------------        func(spanishBot) getGreeting()string{
+    return "hello!"                                                return "Hola!"
+}                                                                }
+
+func printGreeting(eb englishBot)                               func printGreeting(sb spanishBot){
+{                                           -------                  fmt.println(sb.getGreeting())
+    fmt.println(eb.getGreeting())           there will probably have  }                
+}                                           identical logic
+ 
