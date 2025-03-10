@@ -16,3 +16,319 @@ func printGreeting(eb englishBot)                               func printGreeti
     fmt.println(eb.getGreeting())           there will probably have  }                
 }                                           identical logic
  
+------------------------------------------------------------
+package main
+
+import "fmt"
+
+type bot interface {
+	getGreeting() string
+}
+type englishBot struct{}
+type spanishBot struct{}
+
+func (englishBot) getGreeting() string {
+	return "Hello"
+}
+func (spanishBot) getGreeting() string {
+	return "Halo!"
+}
+func main() {
+	eb := englishBot{}
+	sb := spanishBot{}
+	printGreeting(sb)
+	printGreeting(eb)
+}
+func printGreeting(b bot) {
+	fmt.Println(b.getGreeting())
+}
+
+--------------------------------------------------------------
+
+Public and Private in Go Interfaces
+In Go, the visibility of an interface and its methods depends on capitalization:
+
+Public (Exported): Starts with an uppercase letter → Accessible outside the package.
+Private (Unexported): Starts with a lowercase letter → Accessible only within the same package.
+
+
+60. Rules of Interfaces
+syntax-
+type interfaceName interface{
+    //define methods 
+}
+
+type bot interface {
+	getGreeting() string //if you are a type in this program with func called getGreeting and you return a string then you are now an honorary member of type bot
+}
+
+if a interface method accepts any agrument we just have to define the type their
+for eg-
+type bot interface {
+	getGreeting(int) string //if you are a type in this program with func called getGreeting and you return a string then you are now an honorary member of type bot
+}
+
+
+
+
+---------------------------------------------------------
+
+type bot interface{
+    getGreeting(string,int)(string,error)
+}
+ getGreeting-function name
+ (string,int)-list of argument types
+ (string,error) -list of return types 
+
+
+eg-
+type user struct{
+    name string
+}
+
+type bot interface{
+    getGreeting(string,int)(string,error)
+    getBotVersion() float64
+    respondToUser(user) string
+}
+
+
+type 
+------
+Concrete Type                   Interface type
+int                                bot
+struct
+map
+string
+englishBot
+
+
+In Go, there are two main types:
+Concrete Type → A type that provides a full implementation (e.g., struct, int, float, string).
+Interface Type → A type that defines a set of methods but does not provide implementation.
+
+1️⃣ Concrete Type
+A concrete type is a real type that directly represents a value.
+Examples: int, float64, string, struct, map, slice.
+It stores data and provides method implementations.
+
+Example of a Concrete Type (Struct)
+-----------------------------------
+package main
+
+import "fmt"
+
+type Shape interface{
+    Area() float64
+}
+// Concrete Type (Struct)
+type Circle struct {
+    Radius float64
+}
+
+// Concrete method (specific to Circle)
+func (c Circle) Area() float64 {
+    return 3.14 * c.Radius * c.Radius
+}
+
+func main() {
+    c := Circle{Radius: 5}
+    fmt.Println("Area of Circle:", c.Area())  // Directly calling method on concrete type
+}
+✅ Concrete types store data and provide implementation.
+
+2️⃣ Interface Type
+An interface type defines a set of method signatures but does not implement them.
+Any type that implements these methods implicitly satisfies the interface.
+It is useful for abstraction and polymorphism.
+
+package main
+
+import "fmt"
+
+// Interface Type
+type Shape interface {
+    Area() float64
+}
+
+// Concrete Type (Struct)
+type Circle struct {
+    Radius float64
+}
+
+// Implements Shape Interface
+func (c Circle) Area() float64 {
+    return 3.14 * c.Radius * c.Radius
+}
+
+func main() {
+    var s Shape  // Declaring an interface variable
+    s = Circle{Radius: 5}  // Assigning a concrete type to the interface
+
+    fmt.Println("Area of Shape:", s.Area())  // Calling method via interface
+}
+✅ Interfaces allow different types to be treated uniformly, enabling polymorphism.
+
+🔍 Key Differences:
+Feature	Concrete Type	                           Interface Type
+Definition	Represents actual data and behavior.	Defines behavior but does not store data
+Implementation	Implements methods	                 Defines method signatures only
+Storage	     Stores values directly	                 Holds reference to a concrete type
+Usage	  Used for specific objects                	Used for abstraction and polymorphism
+Example	struct, int, string	interface{}
+
+
+------------------------------------------------
+✅Note the point
+----------------
+✅ 1.(In go interface are not generic type) as compare to other language like java has genric types
+go famously doesn't have
+
+✅ 2.interface are implicit in go 
+->we don't manually have to say that our custom type satisfies some interface
+(In Go, you don't need to explicitly declare that a type implements an interface. 
+If a type has all the methods required by an interface, it automatically satisfies that interface.)
+
+This is different from languages like Java or C++, where you must explicitly say a class implements an interface.
+
+Example: Implicit Interface Implementation
+-----
+
+package main
+
+import "fmt"
+
+// Interface defining a method
+type Speaker interface {
+    Speak()
+}
+
+// Struct with the required method
+type Person struct {
+    Name string
+}
+
+// Implementing Speak method (No explicit "implements" keyword needed)
+func (p Person) Speak() {
+    fmt.Println("Hello, my name is", p.Name)
+}
+
+// Function that accepts any type that satisfies Speaker interface
+func Introduce(s Speaker) {
+    s.Speak()
+}
+
+func main() {
+    p := Person{"Jahnavi"}
+    Introduce(p) // Works because Person has a Speak() method
+}
+✅ No need to write "Person implements Speaker"—Go automatically checks if Person has the Speak() method.
+
+Key Takeaways
+-------------
+No explicit declaration needed (like implements in Java).
+If a type has all required methods, it satisfies the interface automatically.
+This makes Go interfaces flexible and easy to use
+
+✅ 3.Interfaces are a contract to help us manage types
+GARBAGE IN->GARBAGE OUT,if out custom types Implementation of a function is broken then interfaces won't help us!
+
+means in simple word
+====================
+Interfaces in Go: A Contract for Managing Types
+-----------------------------------------------
+Interfaces in Go act as a contract that defines expected behavior for types
+However, they do not guarantee correct implementation—meaning if a type’s method is broken, the interface won’t fix it. 
+This is where the phrase "Garbage In → Garbage Out" applies.
+
+Example
+------
+Broken Implementation
+Let's say we have an interface Adder that requires a method Add(a, b int) int, but the struct BadCalculator implements it incorrectly.
+
+
+package main
+
+import "fmt"
+
+// Interface defining a contract
+type Adder interface {
+    Add(a, b int) int
+}
+
+// A struct with a broken implementation
+type BadCalculator struct{}
+
+// Incorrect implementation (subtracting instead of adding)
+func (b BadCalculator) Add(a, b int) int {
+    return a - b  // ❌ Wrong logic!
+}
+
+// Function that depends on the interface
+func Sum(a, b int, adder Adder) int {
+    return adder.Add(a, b)
+}
+
+
+func main() {
+    calc := BadCalculator{}
+    result := Sum(5, 3, calc)  // Expecting 8, but gets 2 due to broken logic!
+    fmt.Println("Result:", result)  // Output: Result: 2
+}
+
+✅ The BadCalculator satisfies the Adder interface (has Add method).
+❌ But its logic is wrong, leading to incorrect output.
+
+Key Takeaways
+Interfaces only define expected methods—they don’t check logic.
+If a type implements a method incorrectly, the interface won't prevent errors.
+"Garbage In → Garbage Out" → If a function inside a type is broken(wrong logic written inside that function), the interface will still use it and return broken results.
+
+-----------------------------------------------------------------------------------------------------------------------------
+What Does "Contract" Mean in Go Interfaces?
+A contract in Go means that an interface defines a set of rules (methods) that a type must follow.
+If a type provides all the methods required by an interface, it automatically "signs the contract" and satisfies the interface. 
+
+Interface as contract
+--------------------
+package main
+
+import "fmt"
+
+// Define an interface (Contract)
+type Speaker interface {
+    Speak()
+}
+
+// Struct that follows the contract
+type Person struct {
+    Name string
+}
+
+// Implementing the Speak() method → Now Person "signs the contract"
+func (p Person) Speak() {
+    fmt.Println("Hello, I am", p.Name)
+}
+
+// Another struct satisfying the contract
+type Dog struct {
+    Breed string
+}
+
+// Implementing the Speak() method for Dog
+func (d Dog) Speak() {
+    fmt.Println("Woof! I am a", d.Breed)
+}
+
+// Function that works with any "Speaker"
+func Introduce(s Speaker) {
+    s.Speak()
+}
+
+func main() {
+    p := Person{"Jahnavi"}
+    d := Dog{"Labrador"}
+
+    Introduce(p) // Works because Person satisfies Speaker
+    Introduce(d) // Works because Dog satisfies Speaker
+}
