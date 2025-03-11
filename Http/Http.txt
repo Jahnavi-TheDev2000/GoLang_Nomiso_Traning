@@ -1,0 +1,156 @@
+net/http package
+Package http provides the http client and server implementation
+
+GET 
+func Get(url string) (resp *Response, err error)
+
+What is a Protocol Version?
+A protocol version refers to the specific version of a communication protocol used between a client and a server.
+It ensures that both sides understand each other when exchanging data over a network.
+
+In Go's HTTP package, protocol version is important for handling web requests and responses correctly.
+
+_______________________________________________________________________________________
+The HTTP protocol is used to send and receive data on the web.
+When you visit a website, your browser sends an HTTP request to the server, and the server responds with an HTTP response.\
+
+HTTP/1.1 → Supports persistent connections (multiple requests in one connection).
+
+//%T → Prints the type of the variable resp.
+c := "hello"
+fmt.Printf("%T\n", c)
+
+Body io.ReadCloser
+
+ReadCloser is the interface that groups the basic Read and Close methods.
+type ReadCloser interface {
+	Reader
+	Closer
+}
+
+type Reader interface {
+	Read(p []byte) (n int, err error)
+}
+
+_______________________________________________________________________________________
+
+
+Response Struct
+Status string
+StatusCode int                                                       io.Reader interface
+Body io.ReadCloser  -----> io.ReadCloser interface          |------->Read([]byte)(int,error) 
+                            Reader --------------------------
+                            Closer --------------------------        io.Closer interface
+                                                            |------->Close()(error)
+
+
+https://pkg.go.dev/net/http#Response
+Why an interface is used as the type inside the struct?
+
+We known that
+-------------
+✅Every value has a type
+✅Every function has  to specifiy the type of its arguments
+
+so that mean
+Every function we ever write has to be  rewritten to accommodate different types even if the logic in it is identical(same)
+
+The Reader interface
+--------------------
+before reader interfaces we are suppose to create print method which accept different agrument to handle the data
+Source of input                                   Return?                        to print it
+---------------                                   -------                        -----------
+HTTP Request Body                               []flargen                      func printHTTP([]flargen)
+Text file on hard drive                         [] string                     func printFile([]string)
+image file on hard drive                        jpegne                        func printImage(jpegne)
+user entering text into command line            []byte                        func printText([]byte)                  
+data from analog sensor plugged into machine    []float                       func printData([]flargen)\
+
+
+After Reader 
+
+Source of input  (Which come from client end)
+---------------
+We are using the interfaces to provide the common o/p for all this input in our application
+HTTP Request Body
+Text file on hard drive
+image file on hard drive ---------------------------------->Reader(interface)-------->[]byte 
+user entering text into command line                                                  output data that anyone can work with
+data from analog sensor plugged into machine
+
+all these Source of input might have to implement interface for common output for our application
+
+
+Response Body said that it needs to implement Body io.Reader interface
+let see what the actual Reader interface read method is doing
+
+we have to read data to request body
+------------------------------------
+1.We will create a Byte slice and
+ then pass it into Read function inside  that read
+  func it takes the byte of slice and Process the raw body of response and inject it /or pushes it to the byte slice
+
+
+(Thing that wants to read the                       int n-byte of slice
+ body something that wants to                      Read([]byte)(int,err)
+ see the reader interface)
+Byte slice         ------------------------>         byte slice
+                                                          |
+                                                          |
+                                                        Raw body of respond
+
+
+Create a byte slice
+-------------------
+1 way
+-----
+bs:=[]byte{//inside this we intialize the value}
+
+2 way
+-------
+using make built in method used to create bit slice
+bs:=make([]byte,99999)
+
+
+[]byte specifies that we are creating a slice of bytes.
+99999 sets the length of the slice, meaning it can store up to 99,999 bytes.
+
+Why Use a Large Byte Slice?
+For reading large amounts of data (e.g., from a file or network stream).
+
+whenever we see byte slice in http request we have to think of string
+before printing
+
+
+
+69. The Writer Interface
+//we use the Reader interface to take some source of data
+and kind of import that data into our application
+
+
+source of data---->Reader---->byte(output data that anyone can work with)
+
+writer interface it do opposite
+[]byte------->Writer------------->some form of output
+
+[]byte------>Writer----------------------------------------------------->Souce of output
+           (Write interface describes                                    outgoing Http Request
+            something that can take info                                  Text file on hard drive
+             and send it outside of our program)                           Image file on hard drive
+
+
+            io.Copy------->Something that implements the Writer interface         Something that implements the Reader interface
+                                     |            Stdout *File                                    |
+                                    os.Stdout(it is a value of type File)                      resp.Body
+                                     |
+                                    File has a function called 'Write'
+                                    |
+                                    Therefore it implements the 'Writer' interface
+                                    |
+                                
+
+
+72. A Custom Write
+
+
+//go compile its source code then generate a executable file which is extension file and 
